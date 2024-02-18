@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PathfindVisualizer", "PathfindVisualizer.vcxproj", "{2F23A5A0-4837-4AD0-9DE6-0651C1114652}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Debug|x64.ActiveCfg = Debug|x64
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Debug|x64.Build.0 = Debug|x64
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Debug|x86.ActiveCfg = Debug|Win32
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Debug|x86.Build.0 = Debug|Win32
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Release|x64.ActiveCfg = Release|x64
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Release|x64.Build.0 = Release|x64
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Release|x86.ActiveCfg = Release|Win32
+		{2F23A5A0-4837-4AD0-9DE6-0651C1114652}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9341025B-7B6F-4126-9605-56B9481D89C2}
+	EndGlobalSection
+EndGlobal
