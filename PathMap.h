@@ -38,6 +38,14 @@ public:
 		return cell;
 	}
 
+	void ChangeCell(sf::Vector2i mousePos, Cell& cell)
+	{
+		if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 625 && mousePos.y < 625)
+		{
+			
+		}
+	}
+
 
 
 public:
