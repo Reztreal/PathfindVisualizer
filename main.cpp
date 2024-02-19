@@ -23,7 +23,17 @@ int main()
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
+            {
+	            for (int i = 0; i < path_map.gridSize; i++)
+	            {
+		            for (int j = 0; j < path_map.gridSize; j++)
+		            {
+                        std::cout << path_map.GetCell(i, j).cellType << " ";
+		            }
+                    std::cout << "\n";
+	            }
                 window.close();
+            }
 
             if (event.type == sf::Event::MouseButtonPressed)
             {
@@ -32,31 +42,44 @@ int main()
                     if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 625 && mousePos.y < 625)
                     {
                         sf::Vector2f lastPos = startCell.cellRect.getPosition();
-                        path_map.SetCellType(lastPos.x / 25, lastPos.y / 25, Cell::empty);
+                        path_map.SetCellType(floor(lastPos.x / 25), floor(lastPos.y / 25), Cell::empty);
 
-                    	startCell = path_map.SetCellType(mousePos.x / 25, mousePos.y / 25, Cell::start);
+                    	startCell = path_map.SetCellType(floor(mousePos.x / 25), floor(mousePos.y / 25), Cell::start);
                         startCellPos = startCell.cellRect.getPosition();
                     }
 	            }
 
-                if (event.mouseButton.button == sf::Mouse::Right)
+                else if (event.mouseButton.button == sf::Mouse::Right)
                 {
                     if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 625 && mousePos.y < 625)
                     {
                         sf::Vector2f lastPos = endCell.cellRect.getPosition();
-                        path_map.SetCellType(lastPos.x / 25, lastPos.y / 25, Cell::empty);
+                        path_map.SetCellType(floor(lastPos.x / 25), floor(lastPos.y / 25), Cell::empty);
 
-                        endCell = path_map.SetCellType(mousePos.x / 25, mousePos.y / 25, Cell::end);
-                        endCellPos = startCell.cellRect.getPosition();
+                        endCell = path_map.SetCellType(floor(mousePos.x / 25), floor(mousePos.y / 25), Cell::end);
+                        endCellPos = endCell.cellRect.getPosition();
                     }
                 }
             }
 
-            if (event.type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::KeyReleased)
             {
 	            if (event.key.code == sf::Keyboard::Space)
 	            {
-                    std::cout << "SPACE" << "\n";
+                    if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 625 && mousePos.y < 625)
+                    {
+                        Cell cell = path_map.GetCell(mousePos.x / 25, mousePos.y / 25);
+                        sf::Vector2f cellPos = cell.cellRect.getPosition();
+
+                        if (cell.cellType == Cell::empty)
+                        {
+                            path_map.SetCellType(cellPos.x / 25, cellPos.y / 25, Cell::obstacle);
+                        }
+                        else if (cell.cellType == Cell::obstacle)
+                        {
+                            path_map.SetCellType(cellPos.x / 25, cellPos.y / 25, Cell::empty);
+                        }
+                    }
 	            }
             }
         }
@@ -75,7 +98,7 @@ int main()
         
 
         //std::cout << "X: " << sf::Mouse::getPosition(window).x << " Y: " << sf::Mouse::getPosition(window).y << "\n";
-        std::cout << startCell.cellRect.getPosition().x << " " << startCell.cellRect.getPosition().y << "\n";
+        //std::cout << startCell.cellRect.getPosition().x << " " << startCell.cellRect.getPosition().y << "\n";
 
         window.display();
     }
