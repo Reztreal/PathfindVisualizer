@@ -81,6 +81,19 @@ int main()
                         }
                     }
 	            }
+
+                if (event.key.code == sf::Keyboard::G)
+                {
+                    std::vector<sf::Vector2f> neighbors = PathMap::GetNeighborCells(startCell.cellRect);
+
+                    std::cout << "STARTING CELL X: " << startCellPos.x / 25 << " STARTING CELL Y: " << startCellPos.y / 25 << "\n";
+
+                    for (int i = 0; i < neighbors.size(); i++)
+                    {
+	                    std::cout << "X: " << neighbors[i].x / 25 << " Y: " << neighbors[i].y / 25 << "\n";
+                        path_map.GetCellRect(neighbors[i].x / 25, neighbors[i].y / 25).setFillColor(sf::Color::Magenta);
+                    }
+                }
             }
         }
         window.clear(sf::Color(18, 33, 43));
