@@ -14,7 +14,7 @@ public:
 				int index = i * gridSize + j;
 				grid[index].cellRect = sf::RectangleShape(sf::Vector2f(cellSize, cellSize));
 				grid[index].cellType = Cell::empty;
-				grid[index].SetColor();
+				grid[index].SetType();
 			}
 		}
 	}
@@ -24,16 +24,19 @@ public:
 		return grid[x * gridSize + y].cellRect;
 	}
 
-	Cell& GetCell(int x, int y) const
+	Cell& GetCell(int x, int y) 
 	{
-		return grid[x * gridSize + y];
+		if (x >= 0 && x <= 625 && y >= 0 && y <= 625 )
+			return grid[x * gridSize + y];
 	}
+
+
 
 	Cell& SetCellType(int x, int y, Cell::Type type)
 	{
 		Cell& cell = GetCell(x, y);
 		cell.cellType = type;
-		cell.SetColor();
+		cell.SetType();
 
 		return cell;
 	}
@@ -43,17 +46,23 @@ public:
 		std::vector<sf::Vector2f> neighborVec;
 		sf::Vector2f currentPos = rect.getPosition();
 
-		sf::Vector2f up = sf::Vector2f(currentPos.x , currentPos.y - 25);
-		sf::Vector2f right = sf::Vector2f(currentPos.x + 25, currentPos.y);
-		sf::Vector2f down = sf::Vector2f(currentPos.x, currentPos.y + 25);
-		sf::Vector2f left = sf::Vector2f(currentPos.x - 25, currentPos.y);
+		std::vector<std::pair<int, int>> directions = {
+			{0, -25},
+			{25, 0},
+			{0, 25},
+			{-25, 0}
+		};
 
-		// Add these to the vec with an if condition to check neighbor cells are inside the grid
+		for (const auto& dir : directions)
+		{
+			int newX = rect.getPosition().x + dir.first;
+			int newY = rect.getPosition().y + dir.second;
 
-		neighborVec.push_back(up);
-		neighborVec.push_back(right);
-		neighborVec.push_back(down);
-		neighborVec.push_back(left);
+			if (newX >= 0 && newX <= 625 && newY >= 0 && newY <= 625)
+			{
+				neighborVec.push_back(sf::Vector2f(newX, newY));
+			}
+		}
 
 		return neighborVec;
 	}

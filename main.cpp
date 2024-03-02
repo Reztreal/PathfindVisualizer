@@ -1,4 +1,9 @@
 #include <iostream>
+#include <queue>
+#include <set>
+#include <chrono>
+#include <thread>
+
 #include "SFML/Graphics.hpp"
 #include "PathMap.h"
 
@@ -84,14 +89,55 @@ int main()
 
                 if (event.key.code == sf::Keyboard::G)
                 {
-                    std::vector<sf::Vector2f> neighbors = PathMap::GetNeighborCells(startCell.cellRect);
-
+                    std::queue<Cell> fringe;
+                    std::set<std::pair<int, int>> visitedCells;
+                    fringe.push(startCell);
+                    visitedCells.insert({ startCellPos.x / 25, startCellPos.y / 25 });
                     std::cout << "STARTING CELL X: " << startCellPos.x / 25 << " STARTING CELL Y: " << startCellPos.y / 25 << "\n";
 
-                    for (int i = 0; i < neighbors.size(); i++)
+                    while(!fringe.empty())
                     {
-	                    std::cout << "X: " << neighbors[i].x / 25 << " Y: " << neighbors[i].y / 25 << "\n";
-                        path_map.GetCellRect(neighbors[i].x / 25, neighbors[i].y / 25).setFillColor(sf::Color::Magenta);
+                        Cell& node = fringe.front();
+                        sf::Vector2f nodePos = node.cellRect.getPosition();
+                        int x = nodePos.x;
+                        int y = nodePos.y;
+
+                        path_map.SetCellType(nodePos.x / 25, nodePos.y / 25, Cell::visited);
+
+                    	std::vector<sf::Vector2f> neighbors = PathMap::GetNeighborCells(node.cellRect);
+                        for (auto& cell : neighbors)
+                        {
+                            int newX = cell.x / 25;
+                            int newY = cell.y / 25;
+                            Cell& neighbor = path_map.GetCell(newX, newY);
+                            neighbor.previousCell = &node;
+
+                            if (visitedCells.count({newX, newY}) == 0 && neighbor.cellType != Cell::obstacle)
+                            {
+                                fringe.push(path_map.GetCell(newX, newY));
+                                visitedCells.insert({ newX, newY });
+                                path_map.SetCellType(newX, newY, Cell::visited);
+                            }
+                        }
+                        fringe.pop();
+                    }
+
+                    Cell* currentCell = &endCell;
+                    while (currentCell != nullptr)
+                    {
+	                    std::cout << currentCell << "\n";
+                        currentCell = currentCell->previousCell;
+                    }
+                }
+
+                if (event.key.code == sf::Keyboard::M)
+                {
+                    std::vector<sf::Vector2f> neighbors = PathMap::GetNeighborCells(startCell.cellRect);
+                    std::cout << "STARTING CELL X: " << startCellPos.x / 25 << " STARTING CELL Y: " << startCellPos.y / 25 << "\n";
+                    for (auto cell : neighbors)
+                    {
+                        path_map.SetCellType(cell.x / 25, cell.y / 25, Cell::visiting);
+	                    std::cout << "X: " << cell.x/25 << " Y: " << cell.y/25 << "\n";
                     }
                 }
             }
