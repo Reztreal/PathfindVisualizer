@@ -6,72 +6,96 @@ class PathMap
 public:
 	PathMap()
 	{
-		grid = new Cell[gridSize * gridSize];
 		for (int i = 0; i < gridSize; i++)
 		{
 			for (int j = 0; j < gridSize; j++)
 			{
-				int index = i * gridSize + j;
-				grid[index].cellRect = sf::RectangleShape(sf::Vector2f(cellSize, cellSize));
-				grid[index].cellType = Cell::empty;
-				grid[index].SetType();
+				grid[i][j].cellRect = sf::RectangleShape(sf::Vector2f(cellSize, cellSize));
+				grid[i][j].cellRect.setPosition(i * (cellSize + gapSize) + gapSize, j * (cellSize + gapSize) + gapSize);
+				grid[i][j].cellType = Cell::empty;
+				grid[i][j].SetType();
 			}
 		}
 	}
 
-	sf::RectangleShape& GetCellRect(int x, int y) const
+	Cell& GetCell(int x, int y)
 	{
-		return grid[x * gridSize + y].cellRect;
+		if (x >= 0 && x <= 625 && y >= 0 && y <= 625)
+		{
+			int nX = x / (cellSize + gapSize);
+			int nY = y / (cellSize + gapSize);
+			return grid[nX][nY];
+		}
 	}
 
-	Cell& GetCell(int x, int y) 
+	void Draw(sf::RenderWindow& window) const
 	{
-		if (x >= 0 && x <= 625 && y >= 0 && y <= 625 )
-			return grid[x * gridSize + y];
+		for (int i = 0; i < gridSize; i++)
+		{
+			for (int j = 0; j < gridSize; j++)
+			{
+				window.draw(grid[i][j].cellRect);
+			}
+		}
 	}
 
-
-
-	Cell& SetCellType(int x, int y, Cell::Type type)
+	static std::vector<sf::Vector2i> GetNeighbors(sf::Vector2i pos)
 	{
-		Cell& cell = GetCell(x, y);
-		cell.cellType = type;
-		cell.SetType();
-
-		return cell;
-	}
-
-	static std::vector<sf::Vector2f> GetNeighborCells(const sf::RectangleShape rect)
-	{
-		std::vector<sf::Vector2f> neighborVec;
-		sf::Vector2f currentPos = rect.getPosition();
-
-		std::vector<std::pair<int, int>> directions = {
+		std::vector<sf::Vector2i> neighbors;
+		std::set<std::pair<int, int>> directions =
+		{
 			{0, -25},
 			{25, 0},
 			{0, 25},
 			{-25, 0}
 		};
 
-		for (const auto& dir : directions)
+
+		for (auto& dir : directions)
 		{
-			int newX = rect.getPosition().x + dir.first;
-			int newY = rect.getPosition().y + dir.second;
+			int newX = pos.x + dir.first;
+			int newY = pos.y + dir.second;
 
 			if (newX >= 0 && newX <= 625 && newY >= 0 && newY <= 625)
 			{
-				neighborVec.push_back(sf::Vector2f(newX, newY));
+				neighbors.push_back(sf::Vector2i(newX, newY));
 			}
 		}
 
-		return neighborVec;
+		return neighbors;
 	}
 
+	void BFSStep(std::queue<sf::Vector2i>& bfsQueue)
+	{
+		if (!bfsQueue.empty())
+		{
+			sf::Vector2i node = bfsQueue.front();
+			int nodeX = node.x / 25;
+			int nodeY = node.y / 25;
+			bfsQueue.pop();
 
+			grid[nodeX][nodeY].cellType = Cell::visited;
+			grid[nodeX][nodeY].SetType();
+
+			std::vector<sf::Vector2i> neighbors = GetNeighbors(node);
+			for (auto& neighbor : neighbors)
+			{
+				if (grid[neighbor.x / 25][neighbor.y / 25].cellType != Cell::visited)
+				{
+					grid[neighbor.x / 25][neighbor.y / 25].cellType = Cell::visited;
+					grid[neighbor.x / 25][neighbor.y / 25].SetType();
+					bfsQueue.push(neighbor);
+				}
+			}
+		}
+	}
 
 public:
 	static constexpr int gridSize = 25;
 	static constexpr int cellSize = 20;
-	Cell* grid;
+
+	static constexpr int gapSize = 5;
+
+	Cell grid[gridSize][gridSize];
 };
 

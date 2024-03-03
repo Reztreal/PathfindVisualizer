@@ -43,8 +43,6 @@ public:
 
 
 public:
-	Cell* previousCell = nullptr;
-
 	enum Type { empty, obstacle, start, visiting, visited, end };
 	Type cellType = empty;
 
