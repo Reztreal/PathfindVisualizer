@@ -46,6 +46,8 @@ public:
 	enum Type { empty, obstacle, start, visiting, visited, end };
 	Type cellType = empty;
 
+	Cell* prevCell = nullptr;
+
 	sf::RectangleShape cellRect;
 	sf::Color emptyColor = sf::Color(232, 249, 253);
 	sf::Color obstacleColor = sf::Color(34, 9, 44);

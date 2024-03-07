@@ -1,8 +1,5 @@
 #include <iostream>
 #include <queue>
-#include <set>
-#include <chrono>
-#include <thread>
 
 #include "SFML/Graphics.hpp"
 #include "PathMap.h"
@@ -18,9 +15,9 @@ int main()
 
     std::queue<sf::Vector2i> bfsq;
 
-
-
     sf::Clock deltaClock;
+    sf::Time timeSinceLastUpdate = sf::Time::Zero;
+    sf::Time interval = sf::milliseconds(30);
     while (window.isOpen())
     {
         sf::Event event;
@@ -28,21 +25,13 @@ int main()
         {
             if (event.type == sf::Event::Closed)
             {
-	            for (int i = 0; i < path_map.gridSize; i++)
-	            {
-		            for (int j = 0; j < path_map.gridSize; j++)
-		            {
-                        std::cout << path_map.GetCell(i * 25, j * 25).cellType << " ";
-		            }
-                    std::cout << "\n";
-	            }
                 window.close();
             }
 
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            	std::cout << "X,Y " << mousePos.x << " " << mousePos.y << "\n";
+            	std::cout << "X,Y " << mousePos.x / 25 << " " << mousePos.y / 25 << "\n";
 
                 if (mousePos.x >= 0 && mousePos.x <= 625 && mousePos.y >= 0 && mousePos.y <= 625)
                 {
@@ -86,8 +75,28 @@ int main()
 	            {
                     path_map.BFSStep(bfsq);
 	            }
+
+                if (event.key.code == sf::Keyboard::M)
+                {
+                    Cell& cell = path_map.GetCell(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                    cell.cellType = Cell::obstacle;
+                    cell.SetType();
+                }
             }
         }
+
+
+        timeSinceLastUpdate += deltaClock.restart();
+        while (timeSinceLastUpdate > interval)
+        {
+            if (!bfsq.empty())
+            {
+                path_map.BFSStep(bfsq);
+            }
+            timeSinceLastUpdate -= interval;
+        }
+
+
         window.clear(sf::Color(18, 33, 43));
 
         path_map.Draw(window);
