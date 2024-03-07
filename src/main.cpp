@@ -17,7 +17,7 @@ int main()
 
     sf::Clock deltaClock;
     sf::Time timeSinceLastUpdate = sf::Time::Zero;
-    sf::Time interval = sf::milliseconds(30);
+    sf::Time interval = sf::milliseconds(10);
     while (window.isOpen())
     {
         sf::Event event;
